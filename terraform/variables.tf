@@ -21,3 +21,21 @@ variable "aws_iam_role_name" {
   type        = string
   default     = "GithubaActionsRole"
 }
+
+variable "aws_account_id" {
+  description = "AWS account ID"
+  type        = string
+  default     = "851725229611"
+}
+
+variable "github_owner_1" {
+  description = "GitHub owner for the first repository"
+  type        = string
+  default     = "Tati-Moon"
+}
+
+variable "github_owner_2" {
+  description = "GitHub owner for the second repository"
+  type        = string
+  default     = "lionna"
+}

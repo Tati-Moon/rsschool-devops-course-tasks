@@ -18,6 +18,9 @@ resource "aws_s3_bucket_versioning" "task_bucket_versioning" {
   versioning_configuration {
     status = "Enabled"
   }
+
+  # Ensure versioning only runs after the bucket is created
+  depends_on = [aws_s3_bucket.task_bucket]
 }
 
 # Add encryption for s3
@@ -29,6 +32,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "task_bucket_sse" 
       sse_algorithm = "AES256"
     }
   }
+
+  # Ensure encryption is configured after bucket creation
+  depends_on = [aws_s3_bucket.task_bucket]
 }
 
 # Create IAM Role for Github Actions
@@ -48,7 +54,7 @@ data "aws_iam_policy_document" "github_actions_assume_role_policy" {
 
     principals {
       type        = "Federated"
-      identifiers = ["arn:aws:iam::851725229611:oidc-provider/token.actions.githubusercontent.com"]
+      identifiers = ["arn:aws:iam::${var.aws_account_id}:oidc-provider/token.actions.githubusercontent.com"]
     }
 
     condition {
@@ -60,7 +66,7 @@ data "aws_iam_policy_document" "github_actions_assume_role_policy" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:Tati-Moon/rsschool-devops-course-tasks:*", "repo:lionna/rsschool-devops-course-tasks:*"]
+      values   = ["repo:${var.github_owner_1}/rsschool-devops-course-tasks:*", "repo:${var.github_owner_2}/rsschool-devops-course-tasks:*"]
     }
   }
 }
