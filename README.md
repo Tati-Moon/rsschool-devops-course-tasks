@@ -1,7 +1,10 @@
 # rsschool-devops-course-tasks
 
-Task 1: AWS Account Configuration
-https://github.com/rolling-scopes-school/tasks/blob/master/devops/modules/1_basic-configuration/task_1.md
+
+<details>
+<summary>Task 1: AWS Account Configuration</summary>
+
+ https://github.com/rolling-scopes-school/tasks/blob/master/devops/modules/1_basic-configuration/task_1.md
 
 This repository contains Terraform configurations for automating AWS infrastructure using GitHub Actions.
 
@@ -164,3 +167,116 @@ Once the workflow completes successfully, you can visit the AWS Management Conso
   This workflow streamlined the infrastructure deployment process and ensured consistent application of Terraform configurations.
 
   ![TERRAFORM](img/task1/05_actions_result.png)
+
+</details>
+
+<details>
+<summary>Task 2: Basic Infrastructure Configuration</summary>
+https://github.com/rolling-scopes-school/tasks/blob/master/devops/modules/1_basic-configuration/task_2.md
+
+![main schema](img/task2/01_scheme.png)
+
+## Infrastructure Overview
+
+This setup consists of a Virtual Private Cloud (VPC) that hosts both public and private subnets in multiple availability zones (AZs) for high availability. A NAT Gateway is deployed to allow instances in private subnets to access the internet securely, while a Bastion Host enables secure access to the private instances.
+
+### VPC (Virtual Private Cloud)
+- A VPC with the CIDR block `10.0.0.0/16`.
+- Enables DNS hostnames and support.
+
+### Subnets
+- **Public Subnets**:
+  - Two public subnets in different Availability Zones (`10.0.1.0/24`, `10.0.2.0/24`).
+  - Automatically assigns public IP addresses to instances launched in these subnets.
+
+![public subnet](img/task2/03_vpc_public.png)
+
+- **Private Subnets**:
+  - Two private subnets in different Availability Zones (`10.0.3.0/24`, `10.0.4.0/24`).
+
+![private subnet](img/task2/02_vpc_private.png)
+
+### Gateways and Routing
+- **Internet Gateway**:
+  - Allows communication between instances in the VPC and the Internet.
+  - Attached to the VPC.
+
+- **NAT Gateway**:
+  - Enables instances in private subnets to initiate outbound traffic to the Internet.
+  - Uses an Elastic IP for consistent outbound connectivity.
+
+### Security
+- **Bastion Host Security Group**:
+  - Allows SSH access (port 22) from your trusted IP address (31.182.250.192/32).
+  - Allows all outbound traffic.
+
+### Bastion Host
+- An `t2.micro` instance serving as a bastion host in the first public subnet (`10.0.1.0/24`).
+- **SSH Key**: The my-key-pair key is used for accessing the Bastion Host.
+
+## Usage
+
+### Prerequisites
+- **Terraform CLI**: Install Terraform on your local machine.
+- **AWS Credentials**: Configure AWS credentials with sufficient permissions.
+
+## File Structure and Purpose
+
+├── bastion_host.tf
+├── gateway.tf
+├── route_table.tf
+├── network_acls.tf
+├── output.tf
+├── security_groups.tf
+├── subnet.tf
+├── variables.tf
+└── vpc.tf
+
+- **`bastion_host.tf`**  
+  Configures an EC2 instance for the Bastion Host, which provides secure SSH access to instances in private subnets.
+
+- **`gateway.tf`**  
+  Defines the Internet Gateway and NAT Gateway for the VPC, allowing public and private subnets to communicate with the Internet.
+
+- **`route_table.tf`**  
+  Configures route tables and their associations for public and private subnets, controlling how traffic is routed within the VPC.
+
+- **`security_groups.tf`**  
+  Sets up Security Groups for the Bastion Host, public subnets, and private subnets, controlling inbound and outbound traffic at the instance level.
+
+- **`subnet.tf`**  
+  Creates public and private subnets within different availability zones, providing network segmentation in the VPC.
+
+- **`variables.tf`**  
+  Declares input variables used across the Terraform configuration, making the code flexible and reusable (e.g., VPC CIDRs, regions, SSH key, etc.).
+
+- **`vpc.tf`**  
+  Defines the VPC resource, specifying the CIDR block, DNS settings, and overall VPC configuration.
+
+- **`network_acls.tf`**  
+  Configures Network ACLs (NACLs) to control traffic at the subnet level, providing an additional layer of security beyond security groups.
+
+### Deployment
+1. Clone this repository:
+   ```bash
+   git clone <repository_url>
+   cd <repository_directory>
+   ```
+2. Initialize Terraform:
+  ```bash
+   terraform init
+   ```
+3. Review Terraform plan:
+  ```bash
+   terraform plan
+   ```
+4. Apply the Terraform configuration:
+  ```bash
+   terraform apply
+   ```
+5. To destroy the infrastructure created by Terraform, run:
+  ```bash
+   terraform destroy
+   ```
+
+</details>
