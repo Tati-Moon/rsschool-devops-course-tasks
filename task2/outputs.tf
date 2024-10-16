@@ -13,12 +13,22 @@ output "terraform_state_bucket_name" {
   description = "The name of the S3 bucket used for Terraform state"
 }
 
-output "github_actions_role_name" {
-  value       = aws_iam_role.github_actions_role.name
-  description = "The name of the IAM role created for Github Actions"
+output "vpc_id" {
+  value = aws_vpc.my_project_vpc.id
 }
 
-output "github_actions_role_arn" {
-  value       = aws_iam_role.github_actions_role.arn
-  description = "The ARN of the IAM role created for Github Actions"
+output "public_subnet_ids" {
+  value = aws_subnet.public_subnet[*].id
+}
+
+output "private_subnet_ids" {
+  value = aws_subnet.private_subnet[*].id
+}
+
+output "nat_gateway_id" {
+  value = aws_nat_gateway.my_project_nat_gateway.id
+}
+
+output "bastion_host_id" {
+  value = aws_instance.bastion_host.id
 }
