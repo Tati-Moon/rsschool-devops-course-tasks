@@ -23,7 +23,7 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_security_group" "allow_ssh" {
-  vpc_id      = aws_vpc.main_vpc.id
+  vpc_id      = aws_vpc.my_project_vpc.id
   name        = "allow_ssh"
   description = "Security group allowing SSH traffic"
   ingress {
@@ -44,7 +44,7 @@ resource "aws_security_group" "allow_ssh" {
 }
 
 resource "aws_security_group" "allow_icmp" {
-  vpc_id      = aws_vpc.main_vpc.id
+  vpc_id      = aws_vpc.my_project_vpc.id
   name        = "allow_icmp"
   description = "Security group allowing ICMP (ping) traffic"
   ingress {
