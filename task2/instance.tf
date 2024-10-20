@@ -48,3 +48,33 @@ resource "aws_instance" "bastion_host" {
     Name = "Bastion Host"
   }
 }
+
+resource "aws_instance" "k3s_node" {
+  ami           = var.ec2_ami_amazon_linux
+  instance_type = var.ec2_instance_type
+  subnet_id     = aws_subnet.public_subnet[0].id
+  key_name      = var.ssh_key_name
+
+  vpc_security_group_ids = [aws_security_group.k3s.id,
+    ]
+
+  tags = {
+    Name = "K3s node"
+  }
+}
+
+resource "aws_instance" "k3s_worker" {
+  count         = length(var.public_subnet_cidrs)
+  ami           = var.ec2_ami_amazon_linux
+  instance_type = var.ec2_instance_type
+  subnet_id     = element(aws_subnet.private_subnet[*].id, count.index)
+  key_name      = var.ssh_key_name
+
+  vpc_security_group_ids = [aws_security_group.k3s.id,]
+
+  tags = {
+    Name = "K3s Worker ${count.index}"
+  }
+
+  depends_on = [aws_instance.k3s_node]
+}

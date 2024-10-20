@@ -207,8 +207,24 @@ This setup consists of a Virtual Private Cloud (VPC) that hosts both public and 
 
 ### Security
 - **Bastion Host Security Group**:
-  - Allows SSH access (port 22) from your trusted IP address (31.182.250.192/32).
+  - Allows SSH access (port 22).
   - Allows all outbound traffic.
+
+  Bastion Host Public IPv4 address: 18.193.108.66
+Private Instance 1 Private IPv4 addresses: 10.0.3.50
+
+![image](img/task2/04_instances.png)
+
+commands:
+```bash
+> nano key.pem
+> ll
+> chmod 400 key.pem
+> ssh -i key.pem ec2-user@10.0.3.50
+> ping www.google.com
+```
+
+![image](img/task2/05_connect_to_private_instance.png)
 
 ### Bastion Host
 - An `t2.micro` instance serving as a bastion host in the first public subnet (`10.0.1.0/24`).
@@ -278,5 +294,12 @@ This setup consists of a Virtual Private Cloud (VPC) that hosts both public and 
   ```bash
    terraform destroy
    ```
+
+</details>
+
+<details>
+<summary>Task 3: K8s Cluster Configuration and Creation</summary>
+
+![main schema](img/task3/01_scheme.png)
 
 </details>
