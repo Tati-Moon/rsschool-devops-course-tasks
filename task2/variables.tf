@@ -45,6 +45,11 @@ variable "ec2_ami_amazon_linux" {
   default     = "ami-0e6a13e7a5b66ff4d"
 }
 
+variable "ec2_instance_type" {
+  description = "EC2 instance type"
+  default     = "t2.micro"
+}
+
 variable "public_subnet_cidrs" {
   type        = list(string)
   description = "CIDR blocks for public subnets"
