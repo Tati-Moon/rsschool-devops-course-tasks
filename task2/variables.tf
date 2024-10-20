@@ -71,7 +71,7 @@ variable "availability_zones" {
 variable "ssh_key_name" {
   description = "The name of the SSH key pair to use for the bastion host."
   type        = string
-  default     = "new-key-pair1"
+  default     = "my-new-key1"
 }
 
 variable "allowed_ip_cidr" {
