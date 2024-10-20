@@ -30,6 +30,7 @@ resource "aws_nat_gateway" "my_project_nat_gateway" {
   }
 }
 
+
 # The 'aws_eip' resource creates an Elastic IP address, which is a static, public IP address 
 # that can be associated with the NAT Gateway. This allows instances in the private subnet 
 # to communicate with the Internet using a consistent IP address.
