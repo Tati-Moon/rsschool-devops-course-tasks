@@ -23,6 +23,7 @@ resource "aws_nat_gateway" "my_project_nat_gateway" {
   # The 'subnet_id' parameter specifies which public subnet this NAT Gateway is placed in.
   # It is necessary for the NAT Gateway to be in a public subnet so it can access the Internet.
   subnet_id = aws_subnet.public_subnet[0].id
+  depends_on    = [aws_internet_gateway.my_project_internet_gateway]
 
   tags = {
     Name = "My Project NAT Gateway"
