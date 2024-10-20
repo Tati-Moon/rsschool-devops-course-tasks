@@ -59,3 +59,9 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
       working-directory: ./task2
+
+    # Step 8: Optionally destroy Terraform-managed infrastructure after testing (on-demand)
+    # To trigger destruction, manually run this workflow and specify a destroy option.
+# - name: Terraform Destroy
+#  run: terraform destroy -auto-approve
+#   working-directory: ./task2
