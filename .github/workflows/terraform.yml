@@ -3,9 +3,9 @@ name: Terraform Workflow
 # Trigger the workflow on pushes and pull requests to the 'main' branch
 on:
   push:
-    branches: ["main"]
+    branches: ["feature/test"]
   pull_request:
-    branches: ["main"]
+    branches: ["feature/test"]
 
 # Set environment variables for AWS region and Terraform version using GitHub secrets
 env:
