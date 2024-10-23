@@ -42,12 +42,12 @@ variable "github_owner_2" {
 
 variable "ec2_ami_amazon_linux" {
   description = "Amazon Linux 2 AMI"
-  default     = "ami-01ef7949f4d25eb05"
+  default     = "ami-0bb482c267f61d918"
 }
 
 variable "ec2_instance_type" {
   description = "EC2 instance type"
-  default     = "t4g.nano"
+  default     = "t2.micro"
 }
 
 variable "public_subnet_cidrs" {
@@ -77,5 +77,5 @@ variable "ssh_key_name" {
 variable "allowed_ip_cidr" {
   description = "CIDR block for allowed IP addresses to access the bastion host."
   type        = string
-  default     = "0.0.0.0/0"  # Разрешить доступ всем
+  default     = "0.0.0.0/0"
 }

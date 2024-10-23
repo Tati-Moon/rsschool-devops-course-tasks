@@ -207,8 +207,24 @@ This setup consists of a Virtual Private Cloud (VPC) that hosts both public and 
 
 ### Security
 - **Bastion Host Security Group**:
-  - Allows SSH access (port 22) from your trusted IP address (31.182.250.192/32).
+  - Allows SSH access (port 22).
   - Allows all outbound traffic.
+
+  Bastion Host Public IPv4 address: 18.193.108.66
+Private Instance 1 Private IPv4 addresses: 10.0.3.50
+
+![image](img/task2/04_instances.png)
+
+commands:
+```bash
+> nano key.pem
+> ll
+> chmod 400 key.pem
+> ssh -i key.pem ec2-user@10.0.3.50
+> ping www.google.com
+```
+
+![image](img/task2/05_connect_to_private_instance.png)
 
 ### Bastion Host
 - An `t2.micro` instance serving as a bastion host in the first public subnet (`10.0.1.0/24`).
@@ -261,6 +277,89 @@ This setup consists of a Virtual Private Cloud (VPC) that hosts both public and 
    ```bash
    git clone <repository_url>
    cd <repository_directory>
+   ```
+2. Initialize Terraform:
+  ```bash
+   terraform init
+   ```
+3. Review Terraform plan:
+  ```bash
+   terraform plan
+   ```
+4. Apply the Terraform configuration:
+  ```bash
+   terraform apply
+   ```
+5. To destroy the infrastructure created by Terraform, run:
+  ```bash
+   terraform destroy
+   ```
+
+</details>
+
+<details>
+<summary>Task 3: K8s Cluster Configuration and Creation</summary>
+
+This task aimed to create AWS infrastructure, including a Kubernetes (K8s) cluster and a bastion host, using Terraform. The project involved provisioning the cluster, deploying a simple workload, and setting up monitoring. The entire process has been documented.
+
+![main schema](img/task3/01_scheme.png)
+
+## Prerequisites
+
+- Terraform installed
+- AWS account with access keys configured
+- SSH access to the bastion host
+- kubectl installed on the local machine
+
+Instances
+![Instances](img/task3/02_instances.png)
+
+- Terraform code was developed to provision AWS resources required for the Kubernetes cluster and bastion host.
+- A bastion host was created to allow secure access to the K8s cluster.
+- The Kubernetes cluster was successfully deployed.
+- A screenshot of the **`kubectl get nodes`** command output was provided to confirm that the cluster was running as expected.
+- A simple workload was deployed to the cluster using the following command:
+**`kubectl apply -f https://k8s.io/examples/pods/simple-pod.yaml`**
+- It was confirmed that the workload was successfully running on the cluster.
+- Monitoring tools were configured to track the cluster's performance and workloads.
+
+commands:
+```bash
+> nano key.pem
+> ll
+> chmod 400 key.pem
+> ssh -i key.pem ec2-user@10.0.3.160
+> kubectl get all -n kube-system
+> kubectl get nodes
+> kubectl apply -f https://k8s.io/examples/pods/simple-pod.yaml
+> kubectl get pods
+> sudo systemctl status grafana-server
+> sudo netstat -tuln | grep 3000
+```
+
+The following command was used to verify that the cluster nodes were up and running
+**`kubectl get nodes`**
+
+Nodes:
+![Nodes](img/task3/03_nodes.png)
+
+A simple pod was deployed using:
+**`kubectl apply -f https://k8s.io/examples/pods/simple-pod.yaml`**
+The pod's status was confirmed with:
+**`kubectl get pods`**
+
+Pods
+![Pods](img/task3/04_podes.png)
+
+Grafana
+![Pods](img/task3/05_grafana.png)
+
+## Steps to Deploy
+
+1. **Clone the Repository**
+   ```bash
+   git clone <repository-url>
+   cd <repository-directory>
    ```
 2. Initialize Terraform:
   ```bash
