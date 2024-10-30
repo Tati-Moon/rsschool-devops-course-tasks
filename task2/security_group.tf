@@ -163,3 +163,43 @@ resource "aws_security_group" "public_instance" {
       Name = "public-instance"
     }
 }
+
+resource "aws_security_group" "k3s" {
+  vpc_id      = aws_vpc.my_project_vpc.id
+
+  ingress {
+    description = "Kubernetes API"
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = ["203.0.113.0/24"]
+  }
+
+  ingress {
+    description = "SSH access"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "k3s-security-group"
+  }
+}
+
+resource "aws_security_group_rule" "grafana_ingress" {
+  type        = "ingress"
+  from_port   = 3000
+  to_port     = 3000
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.k3s.id
+}
