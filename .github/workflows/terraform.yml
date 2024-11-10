@@ -1,33 +1,35 @@
 name: Terraform Workflow
 
-# Trigger the workflow on pushes and pull requests to the 'main' branch
+# Trigger the workflow on push, pull request, and allow manual dispatch
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      destroy:
+        description: "Set to true to destroy infrastructure"
+        required: false
+        default: "true"
 
-# Set environment variables for AWS region and Terraform version using GitHub secrets
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   TERRAFORM_VERSION: ${{ secrets.TERRAFORM_VERSION }}
 
-# Define the permissions for GitHub Actions, specifically enabling OIDC token and content read access
 permissions:
   id-token: write
   contents: read
 
-# Define the Terraform job
 jobs:
   Terraform:
     runs-on: ubuntu-latest
     steps:
-    # Step 1: Check out the repository so the code is available for Terraform
+    # Step 1: Check out the repository
     - name: Checkout repository
       uses: actions/checkout@v4
 
     # Step 2: Configure AWS credentials from an assumed role using OIDC
-    # This step allows GitHub Actions to authenticate to AWS without storing long-term credentials
     - name: Configure AWS credentials from assumed role
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -45,23 +47,23 @@ jobs:
       with:
         terraform_version: ${{ env.TERRAFORM_VERSION }}
 
-    # Step 5: Initialize Terraform configuration (ensure plugins and modules are downloaded)
+    # Step 5: Initialize Terraform configuration
     - name: Terraform Init
       run: terraform init
       working-directory: ./task2
 
-    # Step 6: Run Terraform Plan to preview infrastructure changes
+    # Step 6: Run Terraform Plan
     - name: Terraform Plan
       run: terraform plan
       working-directory: ./task2
 
-    # Step 7: Apply Terraform configuration (auto-approve to avoid interactive prompts)
+    # Step 7: Apply Terraform configuration
     - name: Terraform Apply
       run: terraform apply -auto-approve
       working-directory: ./task2
 
+    # Step 8: Conditionally destroy infrastructure if triggered manually with destroy=true
     - name: Terraform Destroy
-      # Step 8: Optionally destroy Terraform-managed infrastructure after testing (on-demand)
-      # To trigger destruction, manually run this workflow and specify a destroy option.
+      if: ${{ github.event.inputs.destroy == 'true' }}
       run: terraform destroy -auto-approve
       working-directory: ./task2
