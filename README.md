@@ -379,3 +379,92 @@ Grafana
    ```
 
 </details>
+
+<details>
+<summary>Task 4: Jenkins Installation and Configuration</summary>
+
+Describes the steps taken to deploy and configure Jenkins on a Kubernetes cluster using Helm, including additional configuration and verification requirements. 
+
+## Installing Helm
+
+To install Helm, run the following commands:
+
+```bash
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+## Prepare the Cluster
+
+Configured the Kubernetes cluster with support for Persistent Volumes (PV) and Persistent Volume Claims (PVC), as per Kubernetes and k3s documentation.
+
+![main schema](img/task4/02_pv_and_pvc.png)
+
+```bash
+nano jenkins-auth.yaml
+nano jenkins-sa.yaml
+nano jenkins-value.yaml
+nano jenkins-volume.yaml
+
+kubectl apply -f jenkins-auth.yaml
+kubectl apply -f jenkins-sa.yaml
+kubectl apply -f jenkins-value.yaml
+kubectl apply -f jenkins-volume.yaml
+
+kubectl get pv
+kubectl get pvc
+```
+
+## Installing Jenkins
+
+To install java
+```bash
+sudo yum install java-11-openjdk-devel -y
+java -version
+```
+
+Jenkins configure
+
+```bash
+helm repo add jenkinsci https://charts.jenkins.io
+helm repo update
+helm install jenkins jenkinsci/jenkins --namespace default --create-namespace
+helm search repo jenkinsci
+```
+
+## Verify the Installation
+
+You can verify the Helm installation by deploying and uninstalling the Nginx chart:
+
+```bash
+helm version
+kubectl get pods --namespace default
+kubectl get svc --namespace default
+kubectl describe svc jenkins --namespace default
+helm show values jenkinsci
+helm list
+helm repo list
+```
+
+![main schema](img/task4/01_state.png)
+
+## Using Jenkins
+
+    - login to jenkins node
+    - take password from file in "conf" dir
+
+```bash
+#Get Password
+ kubectl get secret --namespace default jenkins -o=jsonpath='{.data.jenkins-admin-password}' | base64 --decode
+```
+
+    - login in Jenkins (port 32000) via admin account and pass
+    - create new user and generate api token
+![main schema](img/task4/05_jenkins_users.png)
+
+    - configure project build and start build
+![main schema](img/task4/03_jenkins_project.png)
+![main schema](img/task4/04_jenkins_result.png)
+
+</details>
