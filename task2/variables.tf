@@ -47,12 +47,7 @@ variable "ec2_ami_amazon_linux" {
 
 variable "ec2_instance_type" {
   description = "EC2 instance type"
-  default     = "t3.medium"
-}
-
-variable "ec2_instance_type_medium" {
-  description = "EC2 instance type"
-  default     = "t3.medium"
+  default     = "t2.micro"
 }
 
 variable "public_subnet_cidrs" {

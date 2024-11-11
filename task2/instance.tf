@@ -1,4 +1,4 @@
-/*resource "aws_instance" "public_instances" {
+resource "aws_instance" "public_instances" {
   count = length(var.public_subnet_cidrs)
 
   ami           = var.ec2_ami_amazon_linux
@@ -24,9 +24,10 @@ resource "aws_instance" "private_instances" {
 
   subnet_id                   =  element(aws_subnet.private_subnet[*].id, count.index)
   vpc_security_group_ids = [
-    aws_security_group.private_instance.id
+    aws_security_group.allow_ssh.id,
+    aws_security_group.allow_icmp.id
   ]
-  associate_public_ip_address = false
+  associate_public_ip_address = true
 
    tags = {
     Name = "Private Instance  ${count.index + 1}"
@@ -39,27 +40,30 @@ resource "aws_instance" "bastion_host" {
   instance_type = var.ec2_instance_type
   subnet_id     = aws_subnet.public_subnet[0].id
   vpc_security_group_ids = [
-    aws_security_group.bastion.id
+    aws_security_group.allow_ssh.id,
+    aws_security_group.allow_icmp.id
   ]
   key_name = var.ssh_key_name
   tags = {
     Name = "Bastion Host"
   }
 }
-*/
+
 resource "aws_instance" "k3s_instance" {
-  ami                    = var.ec2_ami_amazon_linux
-  instance_type          = var.ec2_instance_type_medium
-  key_name               = var.ssh_key_name
-  subnet_id              = aws_subnet.public_subnet[0].id
-  associate_public_ip_address = true
-  vpc_security_group_ids = [aws_security_group.k3s.id]
+  count         = length(var.public_subnet_cidrs)
+  ami           = var.ec2_ami_amazon_linux
+  instance_type = var.ec2_instance_type
+  subnet_id     = element(aws_subnet.private_subnet[*].id, count.index)
+  key_name      = var.ssh_key_name
+
+  vpc_security_group_ids = [
+    aws_security_group.k3s.id]
 
   tags = {
-   Name = "K3s instance"
+    Name = "K3s instance ${count.index + 1}"
   }
 
- user_data = <<-EOF
+  user_data = <<-EOF
               #!/bin/bash
               # Включаем поддержку SELinux
               sudo amazon-linux-extras enable selinux-ng
@@ -119,36 +123,6 @@ resource "aws_instance" "k3s_instance" {
               # Проверка Grafana
               sudo systemctl status grafana-server
               sudo netstat -tuln | grep 3000
-
-              #install Helm
-              curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
-              chmod 700 get_helm.sh
-              ./get_helm.sh
-
-              #Jenkins configure
-              kubectl create ns jenkins
-              kubectl create namespace jenkins
-              helm repo add jenkinsci https://charts.jenkins.io
-              helm repo update
-              helm install jenkins jenkinsci/jenkins --namespace jenkins --create-namespace
-              helm search repo jenkinsci
-
-              kubectl get pods --namespace jenkins
-              kubectl get svc --namespace jenkins
-              kubectl describe svc jenkins --namespace default
-              helm show values jenkinsci
-              helm list
-
-              #Get Password
-              kubectl get secret --namespace default jenkins -o=jsonpath='{.data.jenkins-admin-password}' | base64 --decode
-              
-              #Set Port
-              kubectl apply -f jenkins-auth.yaml
-              kubectl apply -f jenkins-sa.yaml
-              kubectl apply -f jenkins-value.yaml
-              kubectl apply -f jenkins-volume.yaml   
-              kubectl get pv
-              kubectl get pvc
 
               EOF
 }

@@ -14,8 +14,6 @@ output "nat_gateway_id" {
   value = aws_nat_gateway.my_project_nat_gateway.id
 }
 
-/*
 output "bastion_host_id" {
   value = aws_instance.bastion_host.id
 }
-*/
