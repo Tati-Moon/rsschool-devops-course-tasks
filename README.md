@@ -468,3 +468,79 @@ helm repo list
 ![main schema](img/task4/04_jenkins_result.png)
 
 </details>
+
+<details>
+<summary>Task 5: Simple Application Deployment with Helm</summary>
+
+In this task, I created and deployed a simple WordPress application on my Kubernetes (K8s) cluster using Helm. The goal was to package the application into a Helm chart and ensure it is accessible via the internet.
+
+## Steps Completed
+
+### 1. **Helm Chart Creation**
+I created a custom Helm chart for deploying a WordPress application on a Kubernetes cluster. The chart contains all necessary Kubernetes configurations, including deployments, services, and persistent storage, to make the application functional and scalable.
+
+
+```bash
+#Create chart
+              create chart
+              helm create testchart
+              tree testchart
+              #read settings
+              cat testchart/Chart.yaml
+              cat testchart/values.yaml
+              #check
+              helm lint testchart
+              helm install testchart --debug --dry-run testchart
+              #build
+              helm install myfirsttestchart testchart
+              helm list -a
+              kubectl get all
+              kubectl get deployments
+```
+![main schema](img/task5/01_helm_chart.png)
+
+### 2. **Application Deployment**
+I deployed the WordPress application using the Helm chart. This involved:
+- Creating a new Kubernetes namespace.
+- Installing the WordPress application and its required dependencies (like a MariaDB database) through Helm.
+- Ensuring that the application was accessible from the internet via a LoadBalancer service.
+
+```bash
+              #get wordpress bitnami
+              helm repo add bitnami https://charts.bitnami.com/bitnami
+              #check version 23.1.28
+              helm search repo wordpress --versions
+              helm show values bitnami/wordpress --version 23.1.28
+
+              #create catalog wordpress
+              mkdir wordpress
+              cd wordpress
+              touch wordpress-values.yaml
+
+              kubectl create namespace nswordpress
+              kubectl get namespace
+
+              helm install wordpress bitnami/wordpress --values=wordpress-values.yaml --namespace nswordpress --version 23.1.28
+              watch -x kubectl get all --namespace nswordpress
+              
+              export NODE_PORT=$(kubectl get --namespace nswordpress -o jsonpath="{.spec.ports[0].nodePort}" services wordpress)
+              export NODE_IP=$(kubectl get nodes --namespace nswordpress -o jsonpath="{.items[0].status.addresses[0].address}")
+              echo "WordPress URL: http://$NODE_IP:$NODE_PORT/"
+              echo "WordPress Admin URL: http://$NODE_IP:$NODE_PORT/admin"
+```
+![main schema](img/task5/02_wordpress.png)
+
+
+### 3. **Repository and Artifact Storage**
+The WordPress application and its Helm chart were stored in a new Git repository. This repository contains:
+- The Helm chart configuration files.
+- The necessary Kubernetes resources to deploy and manage WordPress.
+
+![main schema](img/task5/03_get_url.png)
+
+### 4. **Application Verification**
+I verified the deployment by checking the Kubernetes resources and confirming that the application was running properly. This included:
+- Checking that the Pods were running and healthy.
+- Ensuring the LoadBalancer exposed the application’s endpoints and was accessible externally.
+
+</details>

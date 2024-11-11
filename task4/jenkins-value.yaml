@@ -19,11 +19,11 @@ spec:
         - containerPort: 8080
         resources:
           requests:
-            memory: "1Gi"
-            cpu: "1"
+            memory: "512Mi" # Минимум 512Mi памяти
+            cpu: "500m" # Минимум 0.5 CPU
           limits:
-            memory: "2Gi"
-            cpu: "2"
+            memory: "1Gi" # Максимум 1Gi памяти
+            cpu: "1" # Максимум 1 CPU
         volumeMounts:
         - mountPath: /var/jenkins_home
           name: jenkins-data

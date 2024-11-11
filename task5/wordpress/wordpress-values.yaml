@@ -1,0 +1,19 @@
+wordpressUsername: tatimoon89
+wordpressPassword: ХХХХХХХХХХХХХХХ
+wordpressEmail: XXXXXXX@gmail.com
+wordpressFirstName: Tati
+wordpressLastName: Moon
+wordpressBlogName: tatimoon8.wordpress.com
+
+service:
+  type: LoadBalancer
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+    ephemeral-storage: 2Gi
+  limits:
+    cpu: 1
+    memory: 2Gi
+    ephemeral-storage: 3Gi

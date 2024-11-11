@@ -142,13 +142,12 @@ resource "aws_instance" "k3s_instance" {
               #Get Password
               kubectl get secret --namespace default jenkins -o=jsonpath='{.data.jenkins-admin-password}' | base64 --decode
               
-              #Set Port
+              #Set PV/PVC
               kubectl apply -f jenkins-auth.yaml
               kubectl apply -f jenkins-sa.yaml
               kubectl apply -f jenkins-value.yaml
               kubectl apply -f jenkins-volume.yaml   
               kubectl get pv
               kubectl get pvc
-
               EOF
 }
