@@ -10,8 +10,8 @@ on:
     inputs:
       destroy:
         description: "Set to true to destroy infrastructure"
-        required: true
-        default: "true"
+        required: false
+        default: "false"
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
