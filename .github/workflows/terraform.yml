@@ -64,6 +64,6 @@ jobs:
 
     # Step 8: Conditionally destroy infrastructure if triggered manually with destroy=true
     - name: Terraform Destroy
-      if: ${{ github.event.inputs.destroy == 'true' }}
+      
       run: terraform destroy -auto-approve
       working-directory: ./task2
